@@ -3,9 +3,17 @@ import ChatModal from "./ChatModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { RiRobot3Fill } from "react-icons/ri";
 import { CgClose } from "react-icons/cg";
+import { ChatMessage } from "../types";
 
 const ChatWidget: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [messages, setMessages] = useState<ChatMessage[]>([
+        {
+            id: Date.now(),
+            sender: "ai",
+            text: "How can I help you today?"
+        }
+    ]);
 
     return (
         <>
@@ -29,7 +37,12 @@ const ChatWidget: React.FC = () => {
 
             {/* Chat Modal with Animation */}
             <AnimatePresence>
-                {isOpen && <ChatModal onClose={() => setIsOpen(false)} />}
+                {isOpen &&
+                    <ChatModal
+                        messages={messages}
+                        setMessages={setMessages}
+                        onClose={() => setIsOpen(false)}
+                    />}
             </AnimatePresence >
         </>
     );

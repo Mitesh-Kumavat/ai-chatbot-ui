@@ -10,12 +10,11 @@ import { IoChevronBack } from "react-icons/io5";
 
 interface ChatModalProps {
     onClose: () => void;
+    messages: ChatMessage[];
+    setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 }
 
-const ChatModal: React.FC<ChatModalProps> = ({ onClose }) => {
-    const [messages, setMessages] = useState<ChatMessage[]>([
-        { id: Date.now(), sender: "ai", text: "How can I help you today?" },
-    ]);
+const ChatModal: React.FC<ChatModalProps> = ({ onClose, messages, setMessages }) => {
     const [language, setLanguage] = useState("EN");
     const { sendQuery } = useChatAPI();
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -91,10 +90,10 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose }) => {
                         )}
                     </AnimatePresence>
                 </div>
-                    <span className="font-normal flex gap-1 items-center text-xs font-white bg-gray-200 px-2 py-1 rounded-xl">
-                        <div className="bg-green-400 text-green-400 w-1.5 h-1.5 rounded-full"></div>
-                        online
-                    </span>
+                <span className="font-normal flex gap-1 items-center text-xs font-white bg-gray-200 px-2 py-1 rounded-xl">
+                    <div className="bg-green-400 text-green-400 w-1.5 h-1.5 rounded-full"></div>
+                    online
+                </span>
             </div>
 
             {/* Chat Messages */}
@@ -110,7 +109,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose }) => {
             <span className="flex bg-zinc-900 text-white justify-center items-center w-full mx-auto text-center text-xs gap-1 py-3">
                 powered by <BiChat />
                 <strong>
-                    <a href="https://github.com/NeuralTechies/" target="_blank">Nerual Techies</a>
+                    <a href="https://github.com/NeuralTechies/" target="_blank">Neural Techies</a>
                 </strong>
             </span>
         </motion.div>
