@@ -1,24 +1,36 @@
 import React, { useState } from "react";
 import ChatModal from "./ChatModal";
-import { FaRobot } from "react-icons/fa";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { RiRobot3Fill } from "react-icons/ri";
+import { CgClose } from "react-icons/cg";
 
 const ChatWidget: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
         <>
+            {/* Floating Chat Button */}
             <motion.button
-                whileTap={{ scale: 0.85 }}
-                animate={{ scale: isOpen ? 0.8 : 1 }}
-                transition={{ type: "spring", stiffness: 200, damping: 10 }}
+                whileTap={{ scale: 0.9 }}
+                animate={{
+                    rotate: isOpen ? 180 : 0,
+                }}
+                transition={{
+                    duration: 0.25,
+                    delay: -0.2,
+                    ease: 'easeOut',
+                }}
                 onClick={() => setIsOpen((prev) => !prev)}
-                className="fixed bottom-5 right-5 bg-blue-500 text-white p-4 rounded-full shadow-lg flex items-center justify-center text-2xl hover:bg-blue-600 transition-all"
+                className="fixed bottom-5 right-5 bg-zinc-900 text-white p-4 rounded-full shadow-lg flex items-center justify-center text-2xl hover:bg-zinc-800 transition-all"
             >
-                <FaRobot />
-            </motion.button>
+                {isOpen ? <CgClose size={24} /> : <RiRobot3Fill size={24} />}
+            </motion.button >
 
-            {isOpen && <ChatModal onClose={() => setIsOpen(false)} />}
+
+            {/* Chat Modal with Animation */}
+            <AnimatePresence>
+                {isOpen && <ChatModal onClose={() => setIsOpen(false)} />}
+            </AnimatePresence >
         </>
     );
 };

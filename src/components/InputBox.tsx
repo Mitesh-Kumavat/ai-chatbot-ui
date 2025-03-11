@@ -1,38 +1,56 @@
-import React, { useState, useEffect } from "react";
-import { FiMic, FiMicOff } from "react-icons/fi";
-import { IoSend } from "react-icons/io5";
+import React, { useState, useEffect, useRef } from "react";
 import useVoiceToText from "../hooks/useVoiceToText";
+import { TbSend } from "react-icons/tb";
+import { IoIosMic, IoIosMicOff } from "react-icons/io";
 
 interface InputBoxProps {
     onSend: (message: string) => void;
+    selectedLanguage: string;
 }
 
-const indianLanguages = [
-    { code: "hi-IN", name: "Hindi" },
-    { code: "gu-IN", name: "Gujarati" },
-    { code: "mr-IN", name: "Marathi" },
-    { code: "ta-IN", name: "Tamil" },
-    { code: "te-IN", name: "Telugu" },
-    { code: "kn-IN", name: "Kannada" },
-    { code: "ml-IN", name: "Malayalam" },
-    { code: "bn-IN", name: "Bengali" },
-    { code: "pa-IN", name: "Punjabi" },
-    { code: "ur-IN", name: "Urdu" }
-];
+const languageMap: { [key: string]: string } = {
+    EN: "en-US",
+    GUJ: "gu-IN",
+    HIN: "hi-IN",
+    TAM: "ta-IN",
+    URD: "ur-IN",
+    PUN: "pa-IN",
+    MAR: "mr-IN",
+    BEN: "bn-IN",
+    MAL: "ml-IN",
+    TEL: "te-IN",
+};
 
 
-const options = {
-    lang: 'en-US',
-    continuous: true,
-}
-
-const InputBox: React.FC<InputBoxProps> = ({ onSend }) => {
+const InputBox: React.FC<InputBoxProps> = ({ onSend, selectedLanguage }) => {
     const [message, setMessage] = useState("");
+    const langCode = languageMap[selectedLanguage] || "en-US";
+    const options = {
+        lang: langCode,
+        continuous: true
+    };
+
     const { transcript, isRecording, startRecording, stopRecording } = useVoiceToText({ options });
+
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    const adjustTextareaHeight = () => {
+        if (textareaRef.current && (message == "" || message.length < 20)) {
+            textareaRef.current.style.height = "1px";
+        }
+        if (textareaRef.current && (message !== "" || message.length > 23)) {
+            const scrollHeight = textareaRef.current.scrollHeight;
+            textareaRef.current.style.height = `${Math.min(scrollHeight, 48)}px`;
+        }
+    };
+
+    useEffect(() => {
+        adjustTextareaHeight();
+    }, [message]);
 
     const startStopRecording = () => {
         isRecording ? stopVoiceInput() : startRecording();
-    }
+    };
 
     const handleSend = () => {
         if (message.trim() !== "") {
@@ -42,28 +60,48 @@ const InputBox: React.FC<InputBoxProps> = ({ onSend }) => {
     };
 
     const stopVoiceInput = () => {
-        setMessage((prev) => prev + (transcript.length ? (prev.length ? '' : '') + transcript : ''))
+        setMessage((prev) => prev + (transcript.length ? (prev.length ? " " : "") + transcript : ""));
         stopRecording();
-    }
+    };
 
     return (
-        <div className="flex items-center p-2 border-t border-gray-300 bg-white">
-            <div className="flex items-center w-full bg-gray-100 rounded-full px-3 py-2 border border-gray-300">
-                <button onClick={() => { startStopRecording() }} className="text-xl text-gray-600 hover:text-black mr-2">
-                    {isRecording ? <FiMicOff color="#ff0000" /> : <FiMic color="#000" />}
-                </button>
-                <input
-                    type="text"
-                    placeholder="Type your query..."
+        <div className="flex items-center border-t-gray-100 bg-white">
+            <div className="flex items-center w-full bg-white px-3 py-2 border border-gray-300">
+                {/* Auto-Resizing Textarea */}
+                <textarea
+                    ref={textareaRef}
+                    placeholder="Ask a question..."
                     disabled={isRecording}
-                    value={isRecording ? message + (transcript.length ? (message.length ? "" : "") + transcript : message) : message}
+                    value={isRecording ? message + (transcript.length ? (message.length ? " " : "") + transcript : message) : message}
                     onChange={(e) => setMessage(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                    className="flex-1 bg-transparent outline-none p-1 text-gray-800"
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSend();
+                        }
+                    }}
+                    className="flex-1 items-center text-start transition-all text-sm bg-transparent outline-none px-1 mt-1 text-gray-800 resize-none overflow-hidden"
+                    style={{ minHeight: "24px", maxHeight: "48px", lineHeight: "20px" }}
                 />
-                <button onClick={handleSend} disabled={isRecording} className="text-xl text-blue-500 hover:text-blue-700 ml-2">
-                    <IoSend />
-                </button>
+
+                <div className="flex gap-2">
+                    <button
+                        onClick={startStopRecording}
+                        className="text-xl text-white hover:bg-zinc-800 p-2 rounded-full bg-zinc-900 "
+                    >
+                        {isRecording ? <IoIosMicOff size={18} color="#ff0000" /> : <IoIosMic size={18} className="text-white" />}
+                    </button>
+
+                    <button
+                        onClick={handleSend}
+                        disabled={isRecording || message === ""}
+                        className={`text-xl text-white hover:bg-zinc-800 p-2 bg-zinc-900 rounded-full text-center items-center  
+                    ${(isRecording || message === "") && "cursor-not-allowed"}`}
+                    >
+
+                        <TbSend size={18} />
+                    </button>
+                </div>
             </div>
         </div>
     );
