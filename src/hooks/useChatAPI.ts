@@ -15,6 +15,7 @@ export const useChatAPI = () => {
                         id: Date.now(),
                         sender: "ai",
                         text: "This is a static response without any link.",
+                        links: [],
                     },
                     {
                         id: Date.now(),

@@ -20,7 +20,7 @@ const ChatMenu: React.FC<ChatMenuProps> = ({ language, setLanguage, onClearChat,
             className="absolute z-[999] top-12 right-3 bg-gray-200 shadow-lg rounded-lg p-2.5 w-36 text-gray-200"
         >
             {/* Language Selector */}
-            <LanguageSelector selected={language} onSelect={setLanguage} />
+            <LanguageSelector selected={language} onSelect={setLanguage} onClose={onClose} />
 
             {/* Clear Chat */}
             <button

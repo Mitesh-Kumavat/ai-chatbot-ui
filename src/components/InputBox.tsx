@@ -1,24 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import useVoiceToText from "../hooks/useVoiceToText";
+import { languageMap } from "../data/data";
 
 interface InputBoxProps {
     onSend: (message: string) => void;
     selectedLanguage: string;
 }
-
-const languageMap: { [key: string]: string } = {
-    EN: "en-US",
-    GUJ: "gu-IN",
-    HIN: "hi-IN",
-    TAM: "ta-IN",
-    URD: "ur-IN",
-    PUN: "pa-IN",
-    MAR: "mr-IN",
-    BEN: "bn-IN",
-    MAL: "ml-IN",
-    TEL: "te-IN",
-};
-
 
 const InputBox: React.FC<InputBoxProps> = ({ onSend, selectedLanguage }) => {
     const [message, setMessage] = useState("");
