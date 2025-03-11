@@ -3,7 +3,7 @@ import { ChatMessage } from "../types";
 import AIMessage from "./AiMessage";
 
 interface MessageListProps {
-    messages: ChatMessage[];
+    messages: ChatMessage[],
 }
 
 const MessageList: React.FC<MessageListProps> = ({ messages }) => {

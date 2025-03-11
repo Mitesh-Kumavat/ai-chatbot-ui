@@ -11,19 +11,32 @@ import { IoChevronBack } from "react-icons/io5";
 interface ChatModalProps {
     onClose: () => void;
     messages: ChatMessage[];
+    isOpen: boolean,
     setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 }
 
-const ChatModal: React.FC<ChatModalProps> = ({ onClose, messages, setMessages }) => {
+const ChatModal: React.FC<ChatModalProps> = ({ onClose, messages, setMessages, isOpen }) => {
     const [language, setLanguage] = useState("EN");
     const { sendQuery } = useChatAPI();
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+    // This is to reach the latest message(scroll automatically to the end of the message)
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages]);
+        const scrollToBottom = () => {
+            if (messagesEndRef.current) {
+                messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+            }
+        };
 
+        const timer = setTimeout(scrollToBottom, 100);
+
+        return () => {
+            clearTimeout(timer)
+        };
+    }, [messages, isOpen]);
+
+    //  Function to handle send button
     const handleSend = async (query: string) => {
         const userMessage: ChatMessage = { id: Date.now(), sender: "user", text: query };
         setMessages((prev) => [...prev, userMessage]);
@@ -37,11 +50,14 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, messages, setMessages })
         setMessages((prev) => [...prev, thinkingMessage]);
 
         const response = await sendQuery(query, language);
+
         setMessages((prev) =>
             prev.filter((msg) => !msg.isThinking).concat(response)
         );
+
     };
 
+    // Function to handle the clear chats
     const handleClearChat = () => {
         setMessages([{ id: Date.now(), sender: "ai", text: "How can I help you today?" }]);
     };
@@ -101,6 +117,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, messages, setMessages })
                 <MessageList messages={messages} />
                 <div ref={messagesEndRef} />
             </div>
+
 
             {/* Input Box */}
             <InputBox onSend={handleSend} selectedLanguage={language} />

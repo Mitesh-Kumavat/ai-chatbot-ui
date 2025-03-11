@@ -1,8 +1,6 @@
-// /src/hooks/useChatAPI.ts
 import { useState } from "react";
 import { ChatMessage } from "../types";
 
-// This hook simulates a backend API call with a 1-second delay.
 export const useChatAPI = () => {
     const [isLoading, setIsLoading] = useState(false);
 
@@ -28,7 +26,6 @@ export const useChatAPI = () => {
                         ],
                     },
                 ];
-                // Randomly choose a simulated response
                 const response = staticResponses[Math.floor(Math.random() * staticResponses.length)];
                 setIsLoading(false);
                 resolve(response);

@@ -1,29 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { ChatMessage } from "../types";
-import { RiRobot3Fill } from "react-icons/ri";
-import AnimatedText from "./AnimatedText";
 
 interface AIMessageProps {
     message: ChatMessage;
 }
 
 const AIMessage: React.FC<AIMessageProps> = ({ message }) => {
-    const [showLinks, setShowLinks] = useState(false);
-    const [finalText, setFinalText] = useState("");
 
     useEffect(() => {
-        if (message.text) {
-            setFinalText(message.text);
-        }
-    }, [message.text]);
+    }, [message.id]);
 
     return (
         <>
             <div className="flex items-start gap-2">
-
                 {/* AI Icon */}
                 <div className="w-7 h-7 flex mt-1 items-center justify-center bg-zinc-800 rounded-full">
-                    <RiRobot3Fill className="text-md text-white" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide text-white lucide-bot">
+                        <path d="M12 8V4H8" />
+                        <rect width="16" height="12" x="4" y="8" rx="2" />
+                        <path d="M2 14h2" />
+                        <path d="M20 14h2" />
+                        <path d="M15 13v2" />
+                        <path d="M9 13v2" />
+                    </svg>
                 </div>
 
                 {/* AI Response */}
@@ -37,19 +36,22 @@ const AIMessage: React.FC<AIMessageProps> = ({ message }) => {
                             </span>
                         </div>
                     ) : (
-                        <AnimatedText fullText={finalText} onComplete={() => setShowLinks(true)} />
+                        <span>
+                            {message.text}
+                        </span>
                     )}
                 </li>
             </div>
 
-            {showLinks && message.links && message.links.length > 0 && (
+            {/* Links Section */}
+            {message.links && message.links.length > 0 && (
                 <div className="flex justify-start pl-10">
-                    <li className="mt-1 min-w-[87%] flex flex-col gap-1">
+                    <li className=" min-w-[87%] flex flex-col gap-1">
                         {message.links.map((link, idx) => (
                             <button
                                 key={idx}
                                 onClick={() => window.location.assign(link.path)}
-                                className="text-sm font-normal min-w-full py-1.5 bg-zinc-800 text-white rounded-lg"
+                                className="text-sm font-normal min-w-full py-1.5 bg-zinc-200 text-zinc-900 border border-zinc-900 hover:bg-zinc-800 hover:text-white transition-all duration-200 ease-in-out rounded-lg"
                             >
                                 {link.label}
                             </button>
