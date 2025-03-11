@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import useVoiceToText from "../hooks/useVoiceToText";
-import { TbSend } from "react-icons/tb";
 
 interface InputBoxProps {
     onSend: (message: string) => void;
